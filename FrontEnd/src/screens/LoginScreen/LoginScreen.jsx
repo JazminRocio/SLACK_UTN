@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import useForm from '../../hooks/useform.jsx'
 import login from '../../services/authService.js'
 import useRequest from '../../hooks/useRequest.jsx'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router'
 
 function LoginScreen() {
 
@@ -10,6 +12,8 @@ function LoginScreen() {
 
     const { loading, response, error, sendRequest } = useRequest()
 
+    const navigate = useNavigate()
+
     async function handleSubmit(event) {
         event.preventDefault()
         sendRequest(
@@ -17,6 +21,20 @@ function LoginScreen() {
         )
         console.log('Usuario intenta iniciar sesion', formState)
     }
+    /* Los efectos sirven para controlar la recarga/ejecucion de una funcion */
+    /*En este caso cuando la response cambie/llegue: 
+    - Guardar en localStorage el auth_token (para que lo podamos seguir usando)
+    - voy a redirecionar a home
+   */
+    useEffect(
+        () => {
+            if (response && response.data) {
+                localStorage.setItem('auth_token', response.data.auth_token)
+                navigate('/')
+            }
+        },
+        [response]
+    )
 
     return (
         <div>
