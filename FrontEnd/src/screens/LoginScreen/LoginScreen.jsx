@@ -1,32 +1,22 @@
 import React, { useState } from 'react'
 import useForm from '../../hooks/useform.jsx'
 import login from '../../services/authService.js'
+import useRequest from '../../hooks/useRequest.jsx'
 
 function LoginScreen() {
 
     const initial_state = { email: '', password: '' }
     const { formState, handleChangeInput } = useForm(initial_state)
 
-    /*Cuando consultemos tendremos este estado que estara guardando como se hace esa consulta, basicamente en que estado esta la consulta  */
-    const [apiResponse, setApiResponse] = useState({ response: null, error: null, loading: false })
+    const { loading, response, error, sendRequest } = useRequest()
 
     async function handleSubmit(event) {
         event.preventDefault()
+        sendRequest(
+            () => login(formState.email, formState.password)
+        )
         console.log('Usuario intenta iniciar sesion', formState)
-        try {
-            setApiResponse({ loading: true, error: null, response: null })
-            const response = await login(formState.email, formState.password)
-            setApiResponse({ loading: false, error: null, response: response })
-        }
-        catch (error) {
-            //Si hubo fallo, guardamos en el estado el mensaje de fallo
-            setApiResponse({ loading: false, error: error.message, response: null })
-        }
-
     }
-
-    console.log('Estado de la consulta de login', apiResponse)
-
 
     return (
         <div>
@@ -48,16 +38,16 @@ function LoginScreen() {
                     </input>
                 </div>
                 {
-                    apiResponse.error && !apiResponse.loading && <span style={{ color: 'red' }}> ERROR {apiResponse.error} </span>
+                    error && !loading && <span style={{ color: 'red' }}> ERROR {error} </span>
                 }
                 {
-                    apiResponse.loading
-                        ? <button type='submit ' disabled={true}>Cargando...</button>
+                    loading
+                        ? <button type='submit' disabled={true}>Cargando...</button>
                         : <button type='submit'>Iniciar sesion</button>
                 }
 
                 {
-                    apiResponse.response && !apiResponse.loading && <span style={{ color: 'green' }}> Inicio de sesion exitosa </span>
+                    response && !loading && <span style={{ color: 'greenyellow' }}> Inicio de sesion exitosa </span>
                 }
 
             </form>
