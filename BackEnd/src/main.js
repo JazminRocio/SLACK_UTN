@@ -17,7 +17,7 @@ import ENVIROMENT from "./config/enviroment.config.js";
 import user_repository from "./repositories/user.repository.js";
 import cors from 'cors'
 
-const PORT = 8080
+const PORT = ENVIROMENT.PORT
 
 const app = express()
 /*Middleware
