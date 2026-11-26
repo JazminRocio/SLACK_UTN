@@ -29,6 +29,20 @@ app.use(express.json())
 // Deshabilita la cors policy  = cualquiera puede consultar
 app.use(cors())
 
+app.use(async (req, res, next) => {
+    try {
+        await connectMongoDB();
+        next();
+    } catch (error) {
+        console.error("Error conectado a MongoDB:", error);
+
+        res.status(503).json({
+            message: "No se pudo conectar a la base de datos "
+        })
+    }
+})
+
+
 app.get(
     '/api/status',
     (request, response) => {

@@ -8,7 +8,8 @@ class MemberRepository {
         return Member.create({
             id_usuario: id_usuario,
             id_espacio_trabajo: id_espacio_trabajo,
-            rol: rol
+            rol: rol,
+            activo: true
         })
     }
 

@@ -2,21 +2,25 @@ import mongoose from "mongoose";
 import ENVIROMENT from "./enviroment.config.js";
 
 
-//console.log(ENVIROMENT)
-/*const MONGO_URI = 'mongodb://localhost:27017'
-const MONGO_DB_NAME = "prueba_bdd"*/
+let connectionPromise = null
 
 async function connectMongoDB() {
-    try {
-        await mongoose.connect(
-            ENVIROMENT.MONGO_DB_URI + '/' + ENVIROMENT.MONGO_DB_NAME
-        )
-        console.log("conexion a MongoDB existosa")
+    if (mongoose.connection.readyState === 1) {
+        return mongoose.connection;
     }
-    catch (error) {
-        console.error('Error critico al conectar a MongoDB', error.message)
-        process.exit(1) //creasheo controlado
+    if (!connectionPromise) {
+        connectionPromise = mongoose.connect(
+            `${ENVIROMENT.MONGO_DB_URI}/${ENVIROMENT.MONGO_DB_NAME}`,
+            {
+                serverSelectionTimeoutMS: 10000
+            }
+        ).catch(error => {
+            connectionPromise = null;
+            throw error;
+        });
     }
+    await connectionPromise;
+    return mongoose.connection
 }
 
 export default connectMongoDB
