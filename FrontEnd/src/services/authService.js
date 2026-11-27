@@ -2,7 +2,7 @@
 Integracion con la API
 */
 
-const API_URL = 'http://localhost:8080'
+const API_URL = import.meta.env.VITE_APP_URL_BACKEND
 
 async function login(email, password) {
 
